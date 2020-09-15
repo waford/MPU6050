@@ -4,11 +4,16 @@
 
 #include <stdio.h>
 
+struct data {
+	double accel[3];
+	double gyro[3];
+}
+
 int main() {
 	initBus(MPU6050_ADDRESS);
 	uint8_t addr = -1;
 	readRegister(WHO_AM_I, &addr, 1);
 	printf("%#02x\n", addr);
-	printf("%d\n%d\n%d\n", accel[accelLabel.x], accel[accelLabel.y], accel[acelLabel.z]);
+	printf("%f\n%f\n%f\n", accel[0], accel[1], accel[2]);
 
 }

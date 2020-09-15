@@ -1,12 +1,12 @@
 /*
- * main.h
+ * mpu.h
  *
- *  Created on: May 17, 2020
+ *  Created on: Sep 11, 2020
  *      Author: waford
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef MPU_H
+#define MPU_H
 
 //Helpful: https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
 

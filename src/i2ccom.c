@@ -28,10 +28,30 @@ int readRegister(uint8_t regAddress, uint8_t buffer[], int length) {
 	}
 }
 
+/*
+*	Write a single uint8_t to a register.
+*	
+*	Param: 	uint8_t regAddress: The address of the register to write to
+*			uint8_t value: 		The value to write to the register
+*/
+
+int writeRegister(uint8_t regAddress, uint8_t value) {
+	uint8_t message[2];
+	message[0] = MPU_ADDRESS;
+	message[1] = value;
+	if(write(regAddress, value, 2) != 1) {
+		printf("Failed to write to reg %d\n", regAddress);
+		return -1;
+	}
+	return 0;
+}
+
+
+
 //Initilizes the i2c bus for communicataion with the provided slave address
 int initBus(uint8_t slaveAddress) {
 	char *filename = (char*)"/dev/i2c-1";
-	//Checks to make sure the i2c file is a legitament file handel
+	//Checks to make sure the i2c file is a legitimate file handle
 	if ((file_i2c = open(filename, O_RDWR)) < 0) {
 		//ERROR HANDLING: you can check errno to see what went wrong
 		printf("Failed to open the i2c bus");

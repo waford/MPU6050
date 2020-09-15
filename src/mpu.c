@@ -1,9 +1,13 @@
+#include "i2ccom.h"
 #include "mpu.h"
 
 
+/*
+*	Wakes MPU up by setting sleep bit (6) in PWR_MGMT_1 (107) to 0.
+*
+*
+*/
 
-double accel[3];
-accel[accelLabel.x] = 0;
-accel[accelLabel.y] = 1;
-accel[accelLabel.z] = 2;
+
+
 
