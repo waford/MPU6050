@@ -1,5 +1,4 @@
 #include "i2ccom.h"
-
 #include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -37,9 +36,9 @@ int readRegister(uint8_t regAddress, uint8_t buffer[], int length) {
 
 int writeRegister(uint8_t regAddress, uint8_t value) {
 	uint8_t message[2];
-	message[0] = MPU_ADDRESS;
+	message[0] = regAddress;
 	message[1] = value;
-	if(write(regAddress, value, 2) != 1) {
+	if(write(file_i2c, message, 2) != 2) {
 		printf("Failed to write to reg %d\n", regAddress);
 		return -1;
 	}

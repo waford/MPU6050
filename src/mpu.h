@@ -93,7 +93,11 @@
 
 #define G (9.81)
 
-//Function Definitions
+//*********Function Prototypes************
+
+void wakeMPU();
+void resetMPU();
+double readTemp();
 
 #endif
 
