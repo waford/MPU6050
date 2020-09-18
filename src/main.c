@@ -4,7 +4,9 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <time.h>
+
+#define MOVING_AVG_SIZE (100)
 
 struct data {
 	double accel[3];
@@ -12,34 +14,56 @@ struct data {
 	double temp;
 } data;
 
+typedef struct movingAvg {
+	double data[MOVING_AVG_SIZE];
+	double mean;
+	int index;
+} movingAvg;
+
+
+double updateMovingAvg(double value, movingAvg * mvAvg) {
+	//Grab index value so we don't have to keep accesing mean for it
+	int ind = mvAvg->index % MOVING_AVG_SIZE;
+	//printf("Ind: %d\n", ind);
+	(mvAvg->data)[ind] = value;
+	ind++;
+	double old = mvAvg->data[ind % MOVING_AVG_SIZE];
+//	printf("Old: %.03f\r", old);
+	 
+	mvAvg->mean += (value - old) / MOVING_AVG_SIZE;
+//	printf("Mean: %0.4f\n", mvAvg->mean);
+	mvAvg->index = ind;
+	return mvAvg->mean;
+}
+
+//Getting a bit dirty here
+void initMovingAvg(movingAvg * mvAvg) {
+	mvAvg->mean = 0;
+	mvAvg->index = 0;
+	for(int i = 0; i < MOVING_AVG_SIZE; i++) {
+		(mvAvg->data)[i] = 0;
+	}
+}
+
+
+
 int main() {
 	initBus(MPU6050_ADDRESS);
 	uint8_t addr = -1;
 	readRegister(WHO_AM_I, &addr, 1);
 	printf("%#02x\n", addr);
 	wakeMPU();
-	double tempAvg = 0;
-	int size = 300;
-	double temps[size];
-	for(int i = 0; i < size; i++) {
-		temps[i] = 25;
-	}
-	int i = 0;
+	movingAvg xAccel;
+	movingAvg yAccel;
+	movingAvg zAccel;
+	initMovingAvg(&xAccel);
+	initMovingAvg(&yAccel);
+	initMovingAvg(&zAccel);
 	while(1) {
-		if(i >= size) {i=0;}
-		double instTemp = readTemp();
-		//printf("INSTTEMP: %0.2f, oldTEMP:%.2f, i:%d\n", instTemp, temps[(i-1) % size], i);
-		temps[i] = instTemp;
-		//Easy way first:
-		tempAvg = 0;
-		for(int j = 0; j < size; j++){
-			tempAvg += (temps[j] / size);
-		}
-		i++;
-		double xAccel = readAccel(X);
-		double yAccel = readAccel(Y);
-		double zAccel = readAccel(Z);
-		double mag = sqrt(pow(xAccel,2) + pow(yAccel,2) + pow(zAccel,2));
-		printf("Temp is %0.3f C, X-Accel: %0.3f, Y-Accel: %0.3f, Z-Accel: %0.3f, Mag: %0.3f\r", tempAvg, xAccel, yAccel, zAccel, mag);
-	}
+		updateMovingAvg(readAccel(X), &xAccel);
+		updateMovingAvg(readAccel(Y), &yAccel);
+        updateMovingAvg(readAccel(Z), &zAccel);
+		double mag = sqrt(pow(xAccel.mean, 2) + pow(yAccel.mean, 2) + pow(zAccel.mean, 2));
+		printf("X Accel:%.3f, Y Accel:%.3f, Z Accel:%.3f, Mag: %.3f  \r", xAccel.mean, yAccel.mean, zAccel.mean, mag);
+	}   
 }
