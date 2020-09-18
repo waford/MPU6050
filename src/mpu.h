@@ -52,6 +52,12 @@
 #define TEMP_OUT_H		(0x41)
 #define TEMP_OUT_L		(0x42)
 
+//High and Low bit Gyroscope registers
+#define GYRO_XOUT_H 	(0x43)
+#define GYRO_YOUT_H		(0x45)
+#define GYRO_ZOUT_H		(0x47)
+
+
 // User control register and associated bit values
 #define USER_CTRL 		(0x6A)
 #define FIFO_EN_BIT		(1<<6)
@@ -91,6 +97,13 @@
 #define EIGHT_G_SENSITIVITY (4096)
 #define SIXTEEN_G_SENSITIVITY (2048)
 
+//LSB/degree/s
+#define ZERO_SENSITIVITY (131)
+#define ONE_SENSITIVITY (65.5)
+#define TWO_SENSITIVITY (32.8)
+#define THREE_SENSITIVITY (16.4)
+
+
 #define G (9.81)
 
 //Datatypes
@@ -108,6 +121,6 @@ void wakeMPU();
 void resetMPU();
 double readTemp();
 double readAccel(Axis axis);
-
+double readGyro(Axis axis);
 #endif
 

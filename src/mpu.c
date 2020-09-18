@@ -7,10 +7,12 @@
 //For storing settings of the MPU
 struct MPU_s {
 	int accelSensitivity;
+	int gyroSensitivity;
 };
 
 struct MPU_s mpu = {
 	.accelSensitivity = TWO_G_SENSITIVITY,
+	.gyroSensitivity = ZERO_SENSITIVITY
 };
 
 //***************Initilization Functions*************************
@@ -53,9 +55,20 @@ double readTemp() {
 double readAccel(Axis axis) {
 	uint16_t accelRegs[] = {ACCEL_XOUT_H, ACCEL_YOUT_H, ACCEL_ZOUT_H};
 	uint8_t rawAccel[2];
-	//Read two consecutive registers from the specided Accel High Register
+	//Read two consecutive registers from the specfied Accel High Register
 	readRegister(accelRegs[axis], rawAccel, 2);
 	int16_t raw16 = (rawAccel[0] << 8) | rawAccel[1];
 	//Stored as 16-bit 2's complement value
 	return ((double) -raw16) / mpu.accelSensitivity;	
 }
+
+double readGyro(Axis axis) {
+	uint16_t gyroRegs[] = {GYRO_XOUT_H, GYRO_YOUT_H, GYRO_ZOUT_H};
+	uint8_t rawGyro[2];
+	//Read two consecutive registers from the specfied Gyro High Register
+	readRegister(gyroRegs[axis], rawGyro, 2);
+	int16_t raw16 = (rawGyro[0] << 8) | rawGyro[1];
+	//Stored as 16-bit 2's complement value
+	return ((double) -raw16) / mpu.gyroSensitivity;	
+}
+

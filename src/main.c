@@ -53,17 +53,18 @@ int main() {
 	readRegister(WHO_AM_I, &addr, 1);
 	printf("%#02x\n", addr);
 	wakeMPU();
-	movingAvg xAccel;
-	movingAvg yAccel;
-	movingAvg zAccel;
-	initMovingAvg(&xAccel);
-	initMovingAvg(&yAccel);
-	initMovingAvg(&zAccel);
+//	movingAvg xAccel;
+//	movingAvg yAccel;
+//	movingAvg zAccel;
+//	initMovingAvg(&xAccel);
+//	initMovingAvg(&yAccel);
+//	initMovingAvg(&zAccel);
+	
+	movingAvg xGyro;
+	initMovingAvg(&xGyro);
+
 	while(1) {
-		updateMovingAvg(readAccel(X), &xAccel);
-		updateMovingAvg(readAccel(Y), &yAccel);
-        updateMovingAvg(readAccel(Z), &zAccel);
-		double mag = sqrt(pow(xAccel.mean, 2) + pow(yAccel.mean, 2) + pow(zAccel.mean, 2));
-		printf("X Accel:%.3f, Y Accel:%.3f, Z Accel:%.3f, Mag: %.3f  \r", xAccel.mean, yAccel.mean, zAccel.mean, mag);
+//		updateMovingAvg(readGyro(X), &xGyro);
+		printf("X Gyro: %0.3f  \r", readGyro(X));
 	}   
 }
