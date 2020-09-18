@@ -7,6 +7,7 @@ CC = gcc
 CFLAGS = -g -Wall
 
 #Libraries
+LIB = -lm
 
 #Source files
 SRCS = $(wildcard *.c)
@@ -18,7 +19,7 @@ default: all
 
 all:
 	@echo Compling files
-	$(CC) -o $(MAIN) $(SRCS)
+	$(CC) -o $(MAIN) $(SRCS) $(LIB)
 
 clean:
 	@echo Cleaning

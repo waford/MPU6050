@@ -2,6 +2,16 @@
 #include "mpu.h"
 
 
+//******MPU Defintion******
+
+//For storing settings of the MPU
+struct MPU_s {
+	int accelSensitivity;
+};
+
+struct MPU_s mpu = {
+	.accelSensitivity = TWO_G_SENSITIVITY,
+};
 
 //***************Initilization Functions*************************
 
@@ -31,10 +41,21 @@ void resetMPU() {
 
 double readTemp() {
 	uint8_t rawTemp[2];
+	//Read two consecutive registers from TEMP_OUT_H into the buffer rawTemp
 	readRegister(TEMP_OUT_H, rawTemp, 2);
 	//Need to negate becasue we read the 2's complement of the value
 	//Debug print
 	//printf("Raw reg values read: TEMP_H: %d, TEMP_L: %d\n", rawTemp[0], rawTemp[1]);
 	int16_t combined =(uint16_t)((rawTemp[0] << 8) | rawTemp[1]);
 	return (double) combined / 340 + 36.53;
+}
+
+double readAccel(Axis axis) {
+	uint16_t accelRegs[] = {ACCEL_XOUT_H, ACCEL_YOUT_H, ACCEL_ZOUT_H};
+	uint8_t rawAccel[2];
+	//Read two consecutive registers from the specided Accel High Register
+	readRegister(accelRegs[axis], rawAccel, 2);
+	int16_t raw16 = (rawAccel[0] << 8) | rawAccel[1];
+	//Stored as 16-bit 2's complement value
+	return ((double) -raw16) / mpu.accelSensitivity;	
 }

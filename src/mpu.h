@@ -86,18 +86,28 @@
 
 
 //LSB/G
-#define Two_G_Sensitivity (16384)
-#define Four_G_Sensitivity (8192)
-#define Eight_G_Sensitivity (4096)
-#define Sixteen_G_Sensitivity (2048)
+#define TWO_G_SENSITIVITY (16384)
+#define FOUR_G_SENSITIVITY (8192)
+#define EIGHT_G_SENSITIVITY (4096)
+#define SIXTEEN_G_SENSITIVITY (2048)
 
 #define G (9.81)
+
+//Datatypes
+typedef enum Axis {
+X = 0,
+Y,
+Z,
+} Axis;
+
+
 
 //*********Function Prototypes************
 
 void wakeMPU();
 void resetMPU();
 double readTemp();
+double readAccel(Axis axis);
 
 #endif
 
