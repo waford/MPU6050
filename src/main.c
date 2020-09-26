@@ -45,26 +45,31 @@ void initMovingAvg(movingAvg * mvAvg) {
 	}
 }
 
-
-
 int main() {
 	initBus(MPU6050_ADDRESS);
 	uint8_t addr = -1;
 	readRegister(WHO_AM_I, &addr, 1);
 	printf("%#02x\n", addr);
 	wakeMPU();
-//	movingAvg xAccel;
-//	movingAvg yAccel;
-//	movingAvg zAccel;
-//	initMovingAvg(&xAccel);
-//	initMovingAvg(&yAccel);
-//	initMovingAvg(&zAccel);
+//	calibrateGyroscope();
+	movingAvg xAccel;
+	movingAvg yAccel;
+	movingAvg zAccel;
+	initMovingAvg(&xAccel);
+	initMovingAvg(&yAccel);
+	initMovingAvg(&zAccel);
 	
 	movingAvg xGyro;
 	initMovingAvg(&xGyro);
 
 	while(1) {
-//		updateMovingAvg(readGyro(X), &xGyro);
-		printf("X Gyro: %0.3f  \r", readGyro(X));
-	}   
+		updateMovingAvg(readAccel(X), &xAccel);
+	updateMovingAvg(readAccel(Y), &yAccel);
+	updateMovingAvg(readAccel(Z), &zAccel);
+	double mag = sqrt(pow(xAccel.mean,2) + pow(yAccel.mean,2) + pow(zAccel.mean,2));
+	printf("XAccel %0.3f, YAccel %0.3f, ZAccel %0.3f, Magnitude: %0.3f  \r", xAccel.mean, yAccel.mean, zAccel.mean, mag);
+
+
+	
+}   
 }

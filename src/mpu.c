@@ -1,6 +1,13 @@
 #include "i2ccom.h"
 #include "mpu.h"
 
+#include <stdio.h>
+
+//******TODOS
+
+//Write function reset MPU struct once mpu gets reset
+//Figure out how to calibrate acceleration
+
 
 //******MPU Defintion******
 
@@ -8,11 +15,16 @@
 struct MPU_s {
 	int accelSensitivity;
 	int gyroSensitivity;
+
+
+	double gyroscopeOffsets[3];
 };
 
 struct MPU_s mpu = {
 	.accelSensitivity = TWO_G_SENSITIVITY,
-	.gyroSensitivity = ZERO_SENSITIVITY
+	.gyroSensitivity = ZERO_SENSITIVITY,
+	
+	.gyroscopeOffsets = {0,0,0},
 };
 
 //***************Initilization Functions*************************
@@ -69,6 +81,44 @@ double readGyro(Axis axis) {
 	readRegister(gyroRegs[axis], rawGyro, 2);
 	int16_t raw16 = (rawGyro[0] << 8) | rawGyro[1];
 	//Stored as 16-bit 2's complement value
-	return ((double) -raw16) / mpu.gyroSensitivity;	
+	return (((double) -raw16) / mpu.gyroSensitivity) - mpu.gyroscopeOffsets[axis];
 }
+
+
+//**************Calibration*****************
+
+
+/*
+* Calibrating gyro is easy. All we need to do is take the average value of each sensor while
+* the gyro is at rest. Assuming that only noticable error is with value offset
+*/
+
+
+void calibrateGyroscope() {
+	int sampleNumber = 10000;
+	printf("Calibrating X axis gyroscope: ");
+	mpu.gyroscopeOffsets[X] = getGyroscopeOffset(X, sampleNumber);
+	printf("\nCalibrating Y axis gyroscope: ");
+	mpu.gyroscopeOffsets[Y] = getGyroscopeOffset(Y, sampleNumber);
+	printf("\nCalibrating Z axis gyroscope: ");
+	mpu.gyroscopeOffsets[Z] = getGyroscopeOffset(Z, sampleNumber);
+	printf("\n");
+}
+
+double getGyroscopeOffset(Axis axis, int sampleNumber) {
+	double offset = 0;
+	int dotprint = sampleNumber / 12;
+	for(int i = 0; i < sampleNumber; i++) {
+		offset += readGyro(axis) / sampleNumber;
+		if(i % dotprint == 0) {printf(".");}
+	}
+	return offset;
+}
+
+
+
+
+
+
+
 

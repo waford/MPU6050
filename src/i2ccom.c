@@ -61,4 +61,5 @@ int initBus(uint8_t slaveAddress) {
 		//ERROR HANDLING; you can check errno to see what went wrong
 		return 1;
 	}
+	return 0;
 }
